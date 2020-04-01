@@ -19,15 +19,19 @@ class Ruler:
         self.B = B #chaîne 2
         self.A_mod = None #chaîne 1 qu'on aligne avec la 2
         self.B_mod = None #chaîne 2 modifée pour être alignée avec la 2
-        self.n = len(self.A) 
+        self.n = len(self.A)
         self.m = len(self.B)
         self.distance = None #distance entre les deux chaînes de caractères
-        self.d = d #coût d'un non alignement 
+        self.d = d #coût d'un non alignement
         self.remplacement_cost = remplacement_cost  #on définit la valeur de la distance liée à un remplacement
         self.insert_cost = insert_cost   #on définit la distance liée à un saut
         self.S=self.choix_mat(S) #matrice des coût de substitution entre les lettres
+
+    def red_text(self, text):
+        return f"{Fore.RED}{text}{Style.RESET_ALL}" #fonction pour mettre une chaîne de caractère en rouge
+
     def report(self):
-        return self.A_mod, self.B_mod #fonction pour retourner les 2 chaînes modifiées 
+        return self.A_mod, self.B_mod #fonction pour retourner les 2 chaînes modifiées
 
     def cout_substitution(self, x, y): # on calcule le coût de substitution de 'x' et 'y'
         M = list(string.ascii_lowercase)  # liste où on retrouve les lettres de l'alphabet
@@ -36,12 +40,11 @@ class Ruler:
         i = M.index(m_1)
         j = M.index(m_2)
         return self.S[i][j]
-    
-    def red_text(self, text):
-        return f"{Fore.RED}{text}{Style.RESET_ALL}" #fonction pour mettre une chaîne de caractère en rouge
 
-    def calculate(self): # on va calculer la distance entre les deux chaînes de caractères
-        Score = np.empty(shape=(self.n + 1, self.m + 1)) 
+
+
+    def compute(self): # on va calculer la distance entre les deux chaînes de caractères
+        Score = np.empty(shape=(self.n + 1, self.m + 1))
         Chemin = np.zeros(shape=(self.n + 1, self.m + 1)) #la matrice qui note au fur et à mesure le chemin à remonter
 
         Score[0][0] = 0 #le cout en haut à gauche est nul
@@ -50,24 +53,24 @@ class Ruler:
         #on associe la valeur 1 quand on vient de la case juste au dessus
         #on associe la valeur 2 quand on vient de la case à gauche
 
+        for i in range(1, self.n + 1): #coûts et déplacements associés sur la première ligne
+            Score[i][0] = (i*self.d)
+            Chemin[i][0] = 2
 
-        for l in range(1, self.m + 1):
-            Score[0][l] = (l*self.d)
-            Chemin[0][l] = 1
+        for j in range(1, self.m + 1): #coûts et déplacements associés sur la première colonne
+            Score[0][j] = (j*self.d)
+            Chemin[0][j] = 1
 
-        for k in range(1, self.n + 1): #coûts et déplacements associés sur la première ligne
-            Score[k][0] = (k*self.d)
-            Chemin[k][0] = 2
-
-        for (k, l) in product(range(1, self.n+1), range(1, self.m+1)): #le reste des cases
-            cout = [Score[i-1][j-1] + self.cout_substitution(self.A[i-1], self.B[j-1]),
+        for (i, j) in product(range(1, self.n+1), range(1, self.m+1)): #on calcule les coûts pour toutes les cases
+            cout = [Score[i-1][j-1] + self.cout_subsitution(self.A[i-1], self.B[j-1]),
                     Score[i][j-1] + self.d,
                     Score[i-1][j] + self.d]
             m = min(cout)
-            Score[k][l] = min(cout)
-            Chemin[k][l] = cout.index(m) #on met 0,1 ou 2 en fonction de l'opération qui compte le moins cher
+            Score[i][j] = min(cout)
+            Chemin[i][j] = cout.index(m)
 
-        x, y = (self.n, self.m) #ici, on part d'en bas à droit de Chemin, on remonte les cases jusqu'à la case de départ 
+
+        x, y = (self.n, self.m) #ici, on part d'en bas à droit de Chemin, on remonte les cases jusqu'à la case de départ
         #avec le chemin optimal
 
         etat = Chemin[x][y]
@@ -98,5 +101,5 @@ class Ruler:
                 self.distance += self.insert_cost
             etat = Chemin[x][y]
 
-        self.A_mod = "".join(n_1) 
+        self.A_mod = "".join(n_1)
         self.B_mod = "".join(n_2)
