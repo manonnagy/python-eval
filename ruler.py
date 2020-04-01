@@ -30,8 +30,7 @@ class Ruler:
     def red_text(self, text):
         return f"{Fore.RED}{text}{Style.RESET_ALL}" #fonction pour mettre une chaîne de caractère en rouge
 
-    def report(self):
-        return self.A_mod, self.B_mod #fonction pour retourner les 2 chaînes modifiées
+
 
     def cout_substitution(self, x, y): # on calcule le coût de substitution de 'x' et 'y'
         M = list(string.ascii_lowercase)  # liste où on retrouve les lettres de l'alphabet
@@ -44,6 +43,8 @@ class Ruler:
 
 
     def compute(self): # on va calculer la distance entre les deux chaînes de caractères
+
+
         Score = np.empty(shape=(self.n + 1, self.m + 1))
         Chemin = np.zeros(shape=(self.n + 1, self.m + 1)) #la matrice qui note au fur et à mesure le chemin à remonter
 
@@ -101,5 +102,19 @@ class Ruler:
                 self.distance += self.insert_cost
             etat = Chemin[x][y]
 
-        self.A_mod = "".join(n_1)
-        self.B_mod = "".join(n_2)
+        a= "".join(n_1)
+        b= "".join(n_2)
+        return (a,b)
+    def report(self):
+        a,b = Ruler.compute(self)
+        print(a,b)
+        #fonction pour retourner les 2 chaînes modifiées
+
+def red_text(text):
+        return f"{Fore.RED}{text}{Style.RESET_ALL}" #fonction pour mettre une chaîne de caractère en rouge
+def test(t):
+    a=red_text(t)
+    b= "".join(a)
+    print(b)
+##Ce programme test renvoie bien en rouge le string d'entrée en rouge. Cependant, sur jupyter et dans ce programme la fonction red_text ne transforme
+##le texte demandé en rouge.
