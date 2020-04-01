@@ -62,7 +62,7 @@ class Ruler:
             Chemin[0][j] = 1
 
         for (i, j) in product(range(1, self.n+1), range(1, self.m+1)): #on calcule les coûts pour toutes les cases
-            cout = [Score[i-1][j-1] + self.cout_subsitution(self.A[i-1], self.B[j-1]),
+            cout = [Score[i-1][j-1] + self.cout_substitution(self.A[i-1], self.B[j-1]),
                     Score[i][j-1] + self.d,
                     Score[i-1][j] + self.d]
             m = min(cout)
